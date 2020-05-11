@@ -1,19 +1,31 @@
 Package: logitbartBMA
-Title: What the Package Does (One Line, Title Case)
+Type: Package
+Title: Bayesian Additive Regression Trees using Bayesian Model Averaging (BART-BMA) for binary outcomes
 Version: 0.0.0.9000
-Authors@R: 
-    person(given = "Eoghan",
-           family = "O'Neill",
-           role = c("aut", "cre"),
-           email = "oneill.eoghan.1@gmail.com")
-Description: What the package does (one paragraph).
+Author: Eoghan O'Neill [aut, cre]
+    Belinda Hernandez [aut]
+    Adrian E. Raftery [aut]
+    Stephen R Pennington [aut]
+    Andrew C. Parnell [aut]
+Maintainer: Eoghan O'Neill <oneill.eoghan.1@gmail.com>
+Description: This package implements Logit-BART-BMA, a version of BART-BMA for binary outcomes. Estimated probabilities are averages of logistic functions of sums-of-trees. BART-BMA (Hernandez B, Raftery A.E., Parnell A.C. (2018) <https://doi.org/10.1007/s11222-017-9767-1>) is an extension to the original BART sum-of-trees model (Chipman et al 2010). BART-BMA differs to the original BART model in two main aspects in order to implement a greedy model which 
+  will be computationally feasible for high dimensional data. Firstly BART-BMA uses a greedy search for the best split points and variables when growing decision trees within each sum-of-trees 
+  model. This means trees are only grown based on the most predictive set of split rules. Also rather than using Markov chain Monte Carlo (MCMC), BART-BMA uses a greedy implementation of Bayesian Model Averaging called Occam's Window 
+  which take a weighted average over multiple sum-of-trees models to form its overall prediction. This means that only the set of sum-of-trees for which there is high support from the data
+  are saved to memory and used in the final model.
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.0
-LinkingTo: 
-    Rcpp,
-    RcppArmadillo
-Imports: 
-    Rcpp
+Imports: Rcpp (>= 1.0.0),  mvnfast, Rdpack, dqrng
+RdMacros: Rdpack
+LinkingTo: Rcpp,
+    RcppArmadillo,
+    RcppNumerical,
+    RcppEigen,
+    dqrng,
+    BH,
+    sitmo
+URL: https://github.com/EoghanONeill/logitbartBMA
+BugReports: https://github.com/EoghanONeill/logitbartBMA/issues
