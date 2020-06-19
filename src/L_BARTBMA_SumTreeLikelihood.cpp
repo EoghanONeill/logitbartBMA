@@ -1565,7 +1565,7 @@ public:
     }
     //prob[i] = R::log1pexp(xbeta[i]);
     negloglik = prob.sum() - yxbeta ;
-    const double f = negloglik - (lambda/2)*beta.squaredNorm();
+    const double f = negloglik + (lambda/2)*beta.squaredNorm();
 
     // Gradient
     //   X' * (p - y), p = exp(X * beta) / (1 + exp(X * beta))
