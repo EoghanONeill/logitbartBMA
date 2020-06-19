@@ -1565,7 +1565,7 @@ public:
     }
     //prob[i] = R::log1pexp(xbeta[i]);
     negloglik = prob.sum() - yxbeta ;
-    const double f = negloglik - (lambda/2)*beta.squaredNorm();
+    const double f = negloglik + 0.5*(lambda)*beta.squaredNorm();
 
     // Gradient
     //   X' * (p - y), p = exp(X * beta) / (1 + exp(X * beta))
@@ -1703,7 +1703,8 @@ List likelihood_function2_exact(arma::vec y_arma,
 
   Hmat.diag() += a;
 
-  double templik0 = 0.5*beta.size()*std::log(a) -nll.negloglikout() - 0.5*real(arma::log_det(Hmat)) ;
+  double templik0 = 0.5*beta.size()*std::log(a) -nll.negloglikout() -
+    0.5*real(arma::log_det(Hmat)) + 0.5*(a)*beta.squaredNorm();
 
   arma::mat invHmat= arma::inv_sympd(Hmat);
   arma::vec mapcoeffs= arma::vec(beta.data(),
@@ -1923,7 +1924,8 @@ List sumtree_likelihood_function2_exact(arma::vec y_arma,List sum_treetable ,Lis
 
   Hmat.diag() += a;
 
-  double templik0 = 0.5*beta.size()*std::log(a) -nll.negloglikout() - 0.5*real(arma::log_det(Hmat)) ;
+  double templik0 = 0.5*beta.size()*std::log(a) -nll.negloglikout() -
+    0.5*real(arma::log_det(Hmat)) + 0.5*(a)*beta.squaredNorm() ;
 
   arma::mat invHmat= arma::inv_sympd(Hmat);
   arma::vec mapcoeffs= arma::vec(beta.data(),
@@ -7905,7 +7907,7 @@ List get_best_trees_update_splits_exact(double less_greedy, double spike_tree, i
           }else{
             //cp_mat_list1=make_gridpoint_cpmat(wrap(tempdata_subset),temp_curr_resids[term_obs],gridsize,num_cp);
             cp_mat_list1=make_gridpoint_cpmat(wrap(tempdata_subset),tempsubset,gridsize,num_cp,
-                                              p_1_minus_p);
+                                              p_1_minus_p.elem(term_obsarma));
           }
           //Rcout << "Line 3386. j = " << j << ". k = " << k << " . \n";
 
@@ -9455,7 +9457,7 @@ List get_best_trees_sum_update_splits_exact(double less_greedy, double spike_tre
           }else{
             //cp_mat_list1=make_gridpoint_cpmat(wrap(tempdata_subset),temp_curr_resids[term_obs],gridsize,num_cp);
             cp_mat_list1=make_gridpoint_cpmat(wrap(tempdata_subset),tempsubset,gridsize,num_cp,
-                                              p_1_minus_p);
+                                              p_1_minus_p.elem(term_obsarma));
           }
           Tempcpmatlist[nodeind]=cp_mat_list1[0];
         }
@@ -10671,6 +10673,10 @@ List preds_logit_bbma_outsamp_with_ints(List overall_sum_trees,
   arma::vec BICi_arma=Rcpp::as<arma::vec>(BICi);
   arma::vec weights_arma(BICi_arma.n_elem);
 
+
+  arma::mat y(num_obs,1);
+  y.col(0)=y_arma;
+
   for(int i=0;i<overall_sum_trees.size();i++){
 
     arma::mat Wmat=W(overall_sum_trees[i],overall_sum_mat[i],num_obs);
@@ -10684,8 +10690,7 @@ List preds_logit_bbma_outsamp_with_ints(List overall_sum_trees,
     //y_arma.col(0)=yvec;
 
 
-    arma::mat y(num_obs,1);
-    y.col(0)=y_arma;
+
     //get exponent
 
 
