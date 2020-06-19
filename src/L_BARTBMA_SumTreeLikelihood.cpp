@@ -1565,7 +1565,7 @@ public:
     }
     //prob[i] = R::log1pexp(xbeta[i]);
     negloglik = prob.sum() - yxbeta ;
-    const double f = negloglik + (lambda/2)*beta.squaredNorm();
+    const double f = negloglik + 0.5*(lambda)*beta.squaredNorm();
 
     // Gradient
     //   X' * (p - y), p = exp(X * beta) / (1 + exp(X * beta))
@@ -1703,7 +1703,8 @@ List likelihood_function2_exact(arma::vec y_arma,
 
   Hmat.diag() += a;
 
-  double templik0 = 0.5*beta.size()*std::log(a) -nll.negloglikout() - 0.5*real(arma::log_det(Hmat)) ;
+  double templik0 = 0.5*beta.size()*std::log(a) -nll.negloglikout() -
+    0.5*real(arma::log_det(Hmat)) + 0.5*(a)*beta.squaredNorm();
 
   arma::mat invHmat= arma::inv_sympd(Hmat);
   arma::vec mapcoeffs= arma::vec(beta.data(),
@@ -1923,7 +1924,8 @@ List sumtree_likelihood_function2_exact(arma::vec y_arma,List sum_treetable ,Lis
 
   Hmat.diag() += a;
 
-  double templik0 = 0.5*beta.size()*std::log(a) -nll.negloglikout() - 0.5*real(arma::log_det(Hmat)) ;
+  double templik0 = 0.5*beta.size()*std::log(a) -nll.negloglikout() -
+    0.5*real(arma::log_det(Hmat)) + 0.5*(a)*beta.squaredNorm() ;
 
   arma::mat invHmat= arma::inv_sympd(Hmat);
   arma::vec mapcoeffs= arma::vec(beta.data(),
